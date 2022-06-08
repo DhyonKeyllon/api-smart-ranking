@@ -1,32 +1,47 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CreateCategorieDto } from './dtos/create-categorie.dto';
+import { CreateCategoryDto } from './dtos/create-category.dto';
 
-import { Categorie } from './interfaces/categorie.interface';
+import { Category } from './interfaces/category.interface';
 
 @Injectable()
 export class CategoriesService {
   constructor(
-    @InjectModel('Categorie')
-    private readonly categorieModule: Model<Categorie>,
+    @InjectModel('Category')
+    private readonly categoryModule: Model<Category>,
   ) {}
 
   async createCategory(
-    createCategoryDto: CreateCategorieDto,
-  ): Promise<Categorie> {
-    const { categorie } = createCategoryDto;
+    createCategoryDto: CreateCategoryDto,
+  ): Promise<Category> {
+    const { category } = createCategoryDto;
 
-    const categorieFound = await this.categorieModule
-      .findOne({ categorie })
+    const categoryFound = await this.categoryModule
+      .findOne({ category })
       .exec();
 
-    if (categorieFound) {
-      throw new Error('Categorie already exists');
+    if (categoryFound) {
+      throw new Error('Category already exists');
     }
 
-    const categorieCreated = new this.categorieModule(createCategoryDto);
+    const categoryCreated = new this.categoryModule(createCategoryDto);
 
-    return await categorieCreated.save();
+    return await categoryCreated.save();
+  }
+
+  async getCategories(): Promise<Category[]> {
+    return await this.categoryModule.find().exec();
+  }
+
+  async getCategory(category: string): Promise<Category> {
+    const categoryFound = await this.categoryModule
+      .findOne({ category })
+      .exec();
+
+    if (!categoryFound) {
+      throw new NotFoundException('Category not found');
+    }
+    return categoryFound;
   }
 }

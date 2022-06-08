@@ -1,9 +1,9 @@
 import * as mongoose from 'mongoose';
 
-export const CategorieSchema = new mongoose.Schema(
+export const CategorySchema = new mongoose.Schema(
   {
-    categorie: { type: String, unique: true },
-    descrition: { type: String },
+    category: { type: String, unique: true },
+    description: { type: String },
     events: [
       {
         name: { type: String },
