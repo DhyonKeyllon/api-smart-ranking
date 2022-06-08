@@ -37,6 +37,7 @@ export class CategoriesController {
   }
 
   @Put('/:category')
+  @UsePipes(ValidationPipe)
   async updateCategory(
     @Body() updateCategoryDto: UpdateCategoryDto,
     @Param('category') category: string,
@@ -45,5 +46,10 @@ export class CategoriesController {
       category,
       updateCategoryDto,
     );
+  }
+
+  @Post('/:category/players/:idPlayer')
+  async setPlayerCategory(@Param() params: string[]): Promise<void> {
+    await this.categoriesService.setPlayerCategory(params);
   }
 }

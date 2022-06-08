@@ -1,9 +1,15 @@
-import { UpdateCategoryDto } from './dtos/update-category.dto';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+
+import { UpdateCategoryDto } from './dtos/update-category.dto';
 import { CreateCategoryDto } from './dtos/create-category.dto';
 
+import { PlayersService } from './../players/players.service';
 import { Category } from './interfaces/category.interface';
 
 @Injectable()
@@ -11,6 +17,7 @@ export class CategoriesService {
   constructor(
     @InjectModel('Category')
     private readonly categoryModule: Model<Category>,
+    private readonly playersService: PlayersService,
   ) {}
 
   async createCategory(
@@ -23,7 +30,7 @@ export class CategoriesService {
       .exec();
 
     if (categoryFound) {
-      throw new Error('Category already exists');
+      throw new BadRequestException('Categoroa já cadastrada.');
     }
 
     const categoryCreated = new this.categoryModule(createCategoryDto);
@@ -32,7 +39,7 @@ export class CategoriesService {
   }
 
   async getCategories(): Promise<Category[]> {
-    return await this.categoryModule.find().exec();
+    return await this.categoryModule.find().populate('players').exec();
   }
 
   async getCategory(category: string): Promise<Category> {
@@ -41,7 +48,7 @@ export class CategoriesService {
       .exec();
 
     if (!categoryFound) {
-      throw new NotFoundException('Category not found');
+      throw new NotFoundException('Categoria não encontrada.');
     }
     return categoryFound;
   }
@@ -55,8 +62,43 @@ export class CategoriesService {
       .exec();
 
     if (!categoryFound) {
-      throw new NotFoundException('Category not found');
+      throw new NotFoundException('Categoria não encontrada.');
     }
+
+    return categoryFound;
+  }
+
+  async setPlayerCategory(params: string[]): Promise<Category> {
+    const category = params['category'];
+    const idPlayer = params['idPlayer'];
+
+    const categoryFound = await this.categoryModule
+      .findOne({ category })
+      .exec();
+
+    if (!categoryFound) {
+      throw new NotFoundException('Categoria não encontrada.');
+    }
+
+    const playerAlreadyExistsInCategory = await this.categoryModule
+      .find({ category })
+      .where('players')
+      .in([idPlayer])
+      .exec();
+
+    if (playerAlreadyExistsInCategory.length > 0) {
+      throw new BadRequestException(
+        'Jogador já está cadastrado nesta categoria.',
+      );
+    }
+
+    await this.playersService.getById(idPlayer);
+
+    categoryFound.players.push(idPlayer);
+
+    await this.categoryModule
+      .findOneAndUpdate({ category }, { $set: categoryFound })
+      .exec();
 
     return categoryFound;
   }
