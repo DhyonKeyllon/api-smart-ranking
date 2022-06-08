@@ -1,3 +1,4 @@
+import { UpdateCategoryDto } from './dtos/update-category.dto';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -42,6 +43,21 @@ export class CategoriesService {
     if (!categoryFound) {
       throw new NotFoundException('Category not found');
     }
+    return categoryFound;
+  }
+
+  async updateCategory(
+    category: string,
+    updateCategoryDto: UpdateCategoryDto,
+  ): Promise<Category> {
+    const categoryFound = await this.categoryModule
+      .findOneAndUpdate({ category }, updateCategoryDto, { new: true })
+      .exec();
+
+    if (!categoryFound) {
+      throw new NotFoundException('Category not found');
+    }
+
     return categoryFound;
   }
 }
