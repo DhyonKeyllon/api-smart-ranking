@@ -134,7 +134,7 @@ export class ChallengesService {
     }
 
     const playerFilter = challengeFound.players.filter(
-      (player) => player._id == setMatchChallengeDto.def._id,
+      (player) => player._id == setMatchChallengeDto.def,
     );
 
     if (playerFilter.length == 0) {
