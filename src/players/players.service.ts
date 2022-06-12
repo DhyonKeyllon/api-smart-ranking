@@ -1,14 +1,15 @@
-import { UpdatePlayerDto } from './dtos/update-player.dto';
 import {
   BadRequestException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-
-import { Player } from './interfaces/player.interface';
-import { CreatePlayerDto } from './dtos/create-player.dto';
 import { InjectModel } from '@nestjs/mongoose';
+
 import { isValidObjectId, Model } from 'mongoose';
+
+import { CreatePlayerDto } from './dtos/create-player.dto';
+import { UpdatePlayerDto } from './dtos/update-player.dto';
+import { Player } from './interfaces/player.interface';
 
 @Injectable()
 export class PlayersService {

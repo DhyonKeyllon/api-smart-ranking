@@ -1,5 +1,3 @@
-import { ParamsValidationPipe } from '../common/pipes/params-validation.pipe';
-import { Player } from './interfaces/player.interface';
 import {
   Body,
   Controller,
@@ -12,9 +10,11 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 
+import { ParamsValidationPipe } from '../common/pipes/params-validation.pipe';
 import { CreatePlayerDto } from './dtos/create-player.dto';
-import { PlayersService } from './players.service';
 import { UpdatePlayerDto } from './dtos/update-player.dto';
+import { Player } from './interfaces/player.interface';
+import { PlayersService } from './players.service';
 
 @Controller('api/v1/players')
 export class PlayersController {

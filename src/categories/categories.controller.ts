@@ -1,6 +1,3 @@
-import { UpdateCategoryDto } from './dtos/update-category.dto';
-import { CategoriesService } from './categories.service';
-import { Category } from './interfaces/category.interface';
 import {
   Body,
   Controller,
@@ -12,7 +9,10 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 
+import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dtos/create-category.dto';
+import { UpdateCategoryDto } from './dtos/update-category.dto';
+import { Category } from './interfaces/category.interface';
 
 @Controller('api/v1/categories')
 export class CategoriesController {
